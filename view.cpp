@@ -3,6 +3,12 @@ using namespace std;
 #include "view.hpp"
 #include "board.hpp"  
 
+
+
+void print_square(Board &board, int i, int j) {
+    cout << board[i][j] << " ";
+}
+
 void print_board(Board &board) {
 
     cout << "  ";

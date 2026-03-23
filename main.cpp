@@ -8,6 +8,7 @@ int main() {
     start(board);
     print_board(board);
     cout << endl;
+    
     // test move
     move_piece(board, 1, 1, 2, 1);
     print_board(board);
