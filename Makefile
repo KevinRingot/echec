@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -W -Wall -Wextra -std=c++17
 NAME = main
-OBJS = main.cpp board.cpp
+OBJS = main.cpp board.cpp view.cpp
 
 all: $(NAME)
 
