@@ -2,6 +2,7 @@ CXX = g++
 CXXFLAGS = -W -Wall -Wextra -std=c++17
 NAME = main
 OBJS = main.cpp board.cpp view.cpp
+OBJS_H = *.hpp
 
 all: $(NAME)
 
@@ -10,5 +11,9 @@ $(NAME): $(OBJS)
 
 clean:
 	del /Q *.o $(NAME).exe 2>NUL || exit 0
+
+re:
+	make clean
+	make all
 
 .PHONY: all clean
