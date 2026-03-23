@@ -12,4 +12,8 @@ $(NAME): $(OBJS)
 clean:
 	del /Q *.o $(NAME).exe 2>NUL || exit 0
 
+re:
+	make clean
+	make all
+
 .PHONY: all clean
