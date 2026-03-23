@@ -21,7 +21,7 @@ void start(Board &board) {
         board[1][j] = BPION;
         board[6][j] = WPION;
     }
-
+// [ligne][colonne]
     board[0][0] = board[0][7] = BTOUR;
     board[7][0] = board[7][7] = WTOUR;
 
