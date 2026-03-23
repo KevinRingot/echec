@@ -1,20 +1,14 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17
-TARGET = main
-OBJS = main.o board.o
+CXXFLAGS = -W -Wall -Wextra -std=c++17
+NAME = main
+OBJS = main.cpp board.cpp
 
-all: $(TARGET)
+all: $(NAME)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
-
-main.o: main.cpp board.hpp types.hpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
-
-board.o: board.cpp board.hpp types.hpp
-	$(CXX) $(CXXFLAGS) -c board.cpp
+$(NAME): $(OBJS)
+	$(CXX) $(OBJS) -o $(NAME) $(CXXFLAGS)
 
 clean:
-	del /Q $(OBJS) $(TARGET).exe 2>NUL || exit 0
+	del /Q *.o $(NAME).exe 2>NUL || exit 0
 
 .PHONY: all clean
