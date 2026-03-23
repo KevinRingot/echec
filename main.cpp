@@ -8,7 +8,7 @@ int main() {
     start(board);
     print_board(board);
     cout << endl;
-    
+
     // test move
     move_piece(board, 1, 1, 2, 1);
     print_board(board);
@@ -21,6 +21,10 @@ int main() {
     cout << endl;
     move_piece(board, 1, 0, 2, 0);
     print_board(board);
+    cout << endl;
+    write_Fen(board);
+    cout << endl;
+
 
     cout << "Test OK" << endl;
     return 0;
