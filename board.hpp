@@ -1,4 +1,3 @@
-
 #ifndef BOARD_HPP_
 #define BOARD_HPP_
 

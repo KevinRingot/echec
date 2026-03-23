@@ -1,0 +1,13 @@
+#include <iostream>
+using namespace std;
+#include "view.hpp"
+#include "board.hpp"  
+
+void print_board(Board &board) {
+    for(int i=0;i<8;i++) {
+        for(int j=0;j<8;j++) {
+            cout << piece_to_char(board[i][j]) << " ";
+        }
+        cout << endl;
+    }
+}
