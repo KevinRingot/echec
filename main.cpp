@@ -24,12 +24,7 @@ int main() {
     cout << endl;
     string fen = write_tab(board);
     cout << fen << endl;
+    write_fen(board , "fen.txt");
     cout << "Test OK" << endl;
-    for(int i = 0 ; i < 8 ; i++){
-        for( int j = 0 ; j < 8 ; j++){
-            cout << board[i][j];
-        }
-    }
-    return 0;
 }
 

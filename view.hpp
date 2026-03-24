@@ -7,7 +7,7 @@ using namespace std;
 
 void print_board(Board &board);
 void print_square(Board &board, int i, int j);
-void write_FEN(Board board, const string& filename);
+void write_fen(Board Board, const string &filename);
 string write_tab(Board board);
 
 

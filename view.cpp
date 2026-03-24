@@ -63,29 +63,15 @@ string write_tab(Board Board) {
 }
 
 
-void write_FEN(Board board, const string& filename) {
-    ofstream file(filename);
-    string fen = "";
-    for (int i = 0; i < 8; i++) {
-        int emptyCount = 0;
-        for (int j = 0; j < 8; j++) {
-            if (board[i][j] == '.') {
-                emptyCount++;
-            } else {
-                if (emptyCount > 0) {
-                    fen += to_string(emptyCount);
-                    emptyCount = 0;
-                }
-                fen += board[i][j];
-            }
-        }
-        if (emptyCount > 0) {
-            fen += to_string(emptyCount);
-        }
 
-        if (i != 7) {
-            fen += '/';
-        }
+
+void write_fen(Board Board, const string &filename) {
+    string fen = write_tab(Board);
+    ofstream file(filename);
+    if (!file) {
+        cout << "Erreur : impossible d'ouvrir le fichier " << filename << "\n";
+        return;
     }
-    file.close();
+    file << fen << "\n";
+
 }
