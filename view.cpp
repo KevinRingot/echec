@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 #include "view.hpp"
 #include "board.hpp"  
@@ -27,49 +28,64 @@ void print_board(Board &board) {
     }
 }
 
-string write_TAB(Board b){
-    string* Tab = new string[100];
-    int index = 0;
-    int number = 0;
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (b[i][j] == '.') {
-                number++;
+
+
+string write_tab(Board Board) {
+    string fen = "";
+
+    for (int r = 0; r < 8; ++r) {
+        int empty_count = 0;
+
+        for (int c = 0; c < 8; ++c) {
+            Piece code = Board[r][c];
+            char piece = piece_to_char(code);
+
+            if (piece == '.') {
+                empty_count++;
             } else {
-                if (number != 0) {
-                    Tab[index] = to_string(number);
-                    index++;
-                    number = 0;
+                if (empty_count > 0) {
+                    fen += to_string(empty_count);
+                    empty_count = 0;
                 }
-                Tab[index] = b[i][j];
-                index++;
+                fen += piece;
             }
         }
-        if (number != 0) {
-            Tab[index] = to_string(number);
-            index++;
-            number = 0;
-        }
-        Tab[index] = '/';
-        index++;
+
+        if (empty_count > 0)
+            fen += std::to_string(empty_count);
+
+        if (r != 7)
+            fen += "/";
     }
-    return Tab;
+
+    return fen;
 }
 
-void write_Fen(char fich[256], Board b){
-    string* tab = write_TAB(b);
-    cout << tab << endl;
-    ofstream fic(fich);
-    if (fic) {
-        int i = 0;
-        while (i < 100) { // enregistrement des valeurs d’un tableau tab de 100  ́el ́ements
-            // dans le fichier
-            fic << tab[i] << " "; //  ́ecriture de l’ ́el ́ement i syntaxe similaire `a l’affichage
-            i++;
+
+void write_FEN(Board board, const string& filename) {
+    ofstream file(filename);
+    string fen = "";
+    for (int i = 0; i < 8; i++) {
+        int emptyCount = 0;
+        for (int j = 0; j < 8; j++) {
+            if (board[i][j] == '.') {
+                emptyCount++;
+            } else {
+                if (emptyCount > 0) {
+                    fen += to_string(emptyCount);
+                    emptyCount = 0;
+                }
+                fen += board[i][j];
+            }
         }
-    } else {
-    cout << "ERREUR : impossible d’ouvrir le fichier en sortie" << endl;
+        if (emptyCount > 0) {
+            fen += to_string(emptyCount);
+        }
+
+        if (i != 7) {
+            fen += '/';
+        }
     }
-    fic.close();
+    file.close();
 }

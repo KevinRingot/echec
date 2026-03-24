@@ -22,11 +22,14 @@ int main() {
     move_piece(board, 1, 0, 2, 0);
     print_board(board);
     cout << endl;
-    write_Fen(board);
-    cout << endl;
-
-
+    string fen = write_tab(board);
+    cout << fen << endl;
     cout << "Test OK" << endl;
+    for(int i = 0 ; i < 8 ; i++){
+        for( int j = 0 ; j < 8 ; j++){
+            cout << board[i][j];
+        }
+    }
     return 0;
 }
 
