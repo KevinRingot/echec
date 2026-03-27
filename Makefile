@@ -1,19 +1,25 @@
 CXX = g++
 CXXFLAGS = -W -Wall -Wextra -std=c++17
 NAME = main
-OBJS = main.cpp board.cpp view.cpp
-OBJS_H = *.hpp
+TEST_READ = test_read_FEN
+TEST_WRITE = test_write_FEN
 
-all: $(NAME)
+all: $(NAME) $(TEST_READ) $(TEST_WRITE)
 
-$(NAME): $(OBJS)
-	$(CXX) $(OBJS) -o $(NAME) $(CXXFLAGS)
+$(NAME): main.cpp board.cpp view.cpp
+	$(CXX) main.cpp board.cpp view.cpp -o $(NAME) $(CXXFLAGS)
+
+$(TEST_READ): test_read_FEN.cpp board.cpp view.cpp
+	$(CXX) test_read_FEN.cpp board.cpp view.cpp -o $(TEST_READ) $(CXXFLAGS)
+
+$(TEST_WRITE): test_write_FEN.cpp board.cpp view.cpp
+	$(CXX) test_write_FEN.cpp board.cpp view.cpp -o $(TEST_WRITE) $(CXXFLAGS)
 
 clean:
-	del /Q *.o $(NAME).exe 2>NUL || exit 0
+	del /Q *.o $(NAME).exe $(TEST_READ).exe $(TEST_WRITE).exe 2>NUL || exit 0
 
 re:
 	make clean
 	make all
 
-.PHONY: all clean
+.PHONY: all clean re
