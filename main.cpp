@@ -29,5 +29,4 @@ int main() {
 
     cout << board_to_FEN(board) << endl << endl;
     cout << "Test OK" << endl;
-    return 0;
 }

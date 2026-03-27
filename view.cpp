@@ -156,7 +156,12 @@ string board_to_FEN(const Board &board) {
     }
 
     return fen;
+
+    return fen;
 }
+
+
+
 
 void write_FEN(const char *filename, const Board &board) {
     ofstream file(filename);

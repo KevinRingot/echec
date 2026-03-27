@@ -4,6 +4,9 @@
 #include <string>
 
 #include "types.hpp"
+#include <string>
+using namespace std;
+
 
 void print_board(Board &board);
 void print_square(Board &board, int i, int j);
