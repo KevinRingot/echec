@@ -1,4 +1,4 @@
-Etude du projet "echec"
+Etude du projet "echec" - Kevin , Yliass
 
 1. Presentation courte du projet
 
