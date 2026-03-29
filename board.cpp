@@ -44,7 +44,11 @@ void move_piece(Board &board, int i1, int j1, int i2, int j2) {
 }
 
 
-char piece_to_char(Piece p) {
-    const char pieces[] = {'.', 'K', 'Q', 'C', 'T', 'F', 'P', 'k', 'q', 'c', 't', 'f', 'p'};
+const char *piece_to_char(Piece p) {
+    const char *pieces[] = {
+        " ",
+        u8"\u265A", u8"\u265B", u8"\u265E", u8"\u265C", u8"\u265D", u8"\u265F",
+        u8"\u265A", u8"\u265B", u8"\u265E", u8"\u265C", u8"\u265D", u8"\u265F"
+    };
     return pieces[p];
 }

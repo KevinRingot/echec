@@ -2,6 +2,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "board.hpp"
 #include "view.hpp"
@@ -9,6 +12,16 @@
 using namespace std;
 
 namespace {
+
+void configure_console_for_unicode() {
+#ifdef _WIN32
+    static bool configured = false;
+    if (!configured) {
+        SetConsoleOutputCP(CP_UTF8);
+        configured = true;
+    }
+#endif
+}
 
 char piece_to_fen(Piece p) {
     switch (p) {
@@ -85,6 +98,11 @@ void set_foreground(Color Couleur)
     cout << "\033[" << (30 + Couleur) << "m";
 }
 
+void set_bright_white_foreground()
+{
+    cout << "\033[97m";
+}
+
 void reset_color()
 {
     cout << "\033[0m";
@@ -93,13 +111,13 @@ void reset_color()
 void print_square_color(Board &board, int i, int j)
 {
     const bool case_claire = ((i + j) % 2 == 0);
-    set_background(case_claire ? JAUNE : BLEU);
+    set_background(case_claire ? JAUNE : VERT);
 
     char fen_char = piece_to_fen(board[i][j]);
     if ('a' <= fen_char && fen_char <= 'z')
-        set_foreground(GRIS);
-    else if ('A' <= fen_char && fen_char <= 'Z')
         set_foreground(NOIR);
+    else if ('A' <= fen_char && fen_char <= 'Z')
+        set_bright_white_foreground();
     else
         set_foreground(NOIR);
 }
@@ -111,6 +129,7 @@ void print_square(Board &board, int i, int j) {
 }
 
 void print_board(Board &board) {
+    configure_console_for_unicode();
     cout << "  ";
     for (int j = 0; j < 8; j++) {
         cout << char(97 + j) << " ";
