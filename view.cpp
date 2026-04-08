@@ -108,7 +108,7 @@ void reset_color()
     cout << "\033[0m";
 }
 
-void print_square_color(Board &board, int i, int j)
+void print_square_color(const Board &board, int i, int j)
 {
     const bool case_claire = ((i + j) % 2 == 0);
     set_background(case_claire ? JAUNE : VERT);
@@ -122,27 +122,92 @@ void print_square_color(Board &board, int i, int j)
         set_foreground(NOIR);
 }
 
-void print_square(Board &board, int i, int j) {
+void print_square_color(const Board &board, const Mask &mask, int i, int j)
+{
+    int code = mask[i][j];
+    switch (code) {
+    case 0:
+        print_square_color(board, i, j);
+        return;
+    case 1:
+        set_background(BLEU); // déplacements possibles
+        break;
+    case 2:
+        set_background(ROUGE); // prises possibles
+        break;
+    case 3:
+        set_background(VERT); // piéces mobiles
+        break;
+    default:
+        set_background(CYAN); // autre information
+        break;
+    }
+
+    char fen_char = piece_to_fen(board[i][j]);
+    if ('a' <= fen_char && fen_char <= 'z')
+        set_foreground(NOIR);
+    else if ('A' <= fen_char && fen_char <= 'Z')
+        set_bright_white_foreground();
+    else
+        set_foreground(NOIR);
+}
+
+void print_square(const Board &board, int i, int j) {
     print_square_color(board, i, j);
     cout << piece_to_char(board[i][j]) << " ";
     reset_color();
 }
 
-void print_board(Board &board) {
+void print_square(const Board &board, const Mask &mask, int i, int j) {
+    print_square_color(board, mask, i, j);
+    cout << piece_to_char(board[i][j]) << " ";
+    reset_color();
+}
+
+void print_board(const Board &board) {
     configure_console_for_unicode();
     cout << "  ";
-    for (int j = 0; j < 8; j++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
         cout << char(97 + j) << " ";
     }
     cout << endl;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
         cout << i << " ";
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
             print_square(board, i, j);
         }
         cout << endl;
     }
+    
+    cout << "  ";
+    for (int j = 0; j < BOARD_SIZE; j++) {
+        cout << char(97 + j) << " ";
+    }
+    cout << endl;
+}
+
+void print_board(const Board &board, const Mask &mask) {
+    configure_console_for_unicode();
+    cout << "  ";
+    for (int j = 0; j < BOARD_SIZE; j++) {
+        cout << char(97 + j) << " ";
+    }
+    cout << endl;
+
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        cout << i << " ";
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            print_square(board, mask, i, j);
+        }
+        cout << endl;
+    }
+    
+    cout << "  ";
+    for (int j = 0; j < BOARD_SIZE; j++) {
+        cout << char(97 + j) << " ";
+    }
+    cout << endl;
 }
 
 string board_to_FEN(const Board &board) {

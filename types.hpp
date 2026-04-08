@@ -19,7 +19,9 @@ enum Color {
     GRIS = 7,
 };
 
-using Board = Piece[8][8];
+constexpr int BOARD_SIZE = 8;
+using Board = Piece[BOARD_SIZE][BOARD_SIZE];
+using Mask = int[BOARD_SIZE][BOARD_SIZE];
 
 struct Game {
     Board board;

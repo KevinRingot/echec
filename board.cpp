@@ -1,8 +1,9 @@
 #include "board.hpp"
+#include "mask.hpp"
 
 void empty(Board &board) {
-    for(int i=0;i<8;i++)
-        for(int j=0;j<8;j++)
+    for(int i=0;i<BOARD_SIZE;i++)
+        for(int j=0;j<BOARD_SIZE;j++)
             board[i][j] = EMPTY;
 }
 
@@ -52,3 +53,108 @@ const char *piece_to_char(Piece p) {
     };
     return pieces[p];
 }
+
+bool is_white(Piece p) {
+    return p >= WROY && p <= WPION;
+}
+
+bool is_black(Piece p) {
+    return p >= BROY && p <= BPION;
+}
+
+bool is_opponent(Piece attacker, Piece target) {
+    if (target == EMPTY)
+        return false;
+    if (is_white(attacker))
+        return is_black(target);
+    if (is_black(attacker))
+        return is_white(target);
+    return false;
+}
+
+static bool in_bounds(int i, int j) {
+    return i >= 0 && i < BOARD_SIZE && j >= 0 && j < BOARD_SIZE;
+}
+
+static void mark_if_attacked(const Board &board, Mask mask, int i, int j, Piece attacker) {
+    if (!in_bounds(i, j))
+        return;
+    if (is_opponent(attacker, board[i][j])) {
+        set_mask(mask, i, j, 2);
+    }
+}
+
+void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn) {
+    clear_mask(mask);
+
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            Piece p = board[i][j];
+            if (p == EMPTY)
+                continue;
+            if (whiteTurn ? !is_white(p) : !is_black(p))
+                continue;
+
+            switch (p) {
+                case WPION:
+                    mark_if_attacked(board, mask, i - 1, j - 1, p);
+                    mark_if_attacked(board, mask, i - 1, j + 1, p);
+                    break;
+                case BPION:
+                    mark_if_attacked(board, mask, i + 1, j - 1, p);
+                    mark_if_attacked(board, mask, i + 1, j + 1, p);
+                    break;
+                case WCAVALIER:
+                case BCAVALIER:
+                    {
+                        const int di[] = {-2,-2,-1,-1,1,1,2,2};
+                        const int dj[] = {-1,1,-2,2,-2,2,-1,1};
+                        for (int k = 0; k < 8; ++k)
+                            mark_if_attacked(board, mask, i + di[k], j + dj[k], p);
+                    }
+                    break;
+                case WTOUR:
+                case BTOUR:
+                case WFOU:
+                case BFOU:
+                case WREINE:
+                case BREINE:
+                case WROY:
+                case BROY:
+                    {
+                        const int dirs[8][2] = {
+                            {1,0},{-1,0},{0,1},{0,-1},
+                            {1,1},{1,-1},{-1,1},{-1,-1}
+                        };
+                        int max_steps = 1;
+                        if (p == WTOUR || p == BTOUR || p == WFOU || p == BFOU || p == WREINE || p == BREINE)
+                            max_steps = BOARD_SIZE;
+
+                        for (int d = 0; d < 8; ++d) {
+                            if ((p == WTOUR || p == BTOUR) && d >= 4) continue;
+                            if ((p == WFOU || p == BFOU) && d < 4) continue;
+
+                            int di = dirs[d][0];
+                            int dj = dirs[d][1];
+
+                            for (int step = 1; step <= max_steps; ++step) {
+                                int ii = i + di * step;
+                                int jj = j + dj * step;
+                                if (!in_bounds(ii, jj))
+                                    break;
+                                if (board[ii][jj] == EMPTY)
+                                    continue;
+                                if (is_opponent(p, board[ii][jj]))
+                                    set_mask(mask, ii, jj, 2);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
