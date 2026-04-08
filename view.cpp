@@ -272,7 +272,8 @@ void read_FEN(const char *filename, Board &board) {
     int lig = 0;
     int col = 0;
 
-    for (char c : fen) {
+    for (int i = 0; fen[i] != '\0'; i++) {
+        char c = fen[i];
         if (c == '/') {
             if (col != 8) {
                 throw runtime_error("Ligne FEN incomplete");
