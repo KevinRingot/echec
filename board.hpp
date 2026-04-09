@@ -14,6 +14,13 @@ bool is_white(Piece p);
 bool is_black(Piece p);
 bool is_opponent(Piece attacker, Piece target);
 
+void highlight_possible_moves_rook(const Board &board, Mask mask, int i, int j);
+void highlight_possible_moves_bishop(const Board &board, Mask mask, int i, int j);
+void highlight_possible_moves_queen(const Board &board, Mask mask, int i, int j);
+void highlight_possible_moves_king(const Board &board, Mask mask, int i, int j);
+void highlight_possible_moves_knight(const Board &board, Mask mask, int i, int j);
+void highlight_possible_moves_pawn(const Board &board, Mask mask, int i, int j);
+void highlight_movable_pieces(const Board &board, Mask mask, bool whiteTurn);
 void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn);
 
 #endif

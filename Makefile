@@ -2,10 +2,11 @@ CXX = g++
 CXXFLAGS = -W -Wall -Wextra -std=c++17
 NAME = main
 
-all: $(NAME) $(TEST_READ) $(TEST_WRITE)
+all: $(NAME)
 
 $(NAME): main.cpp board.cpp view.cpp mask.cpp
 	$(CXX) main.cpp board.cpp view.cpp mask.cpp -o $(NAME) $(CXXFLAGS)
+
 clean:
 	del /Q *.o $(NAME).exe 2>NUL || exit 0
 

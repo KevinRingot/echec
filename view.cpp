@@ -18,9 +18,34 @@ void configure_console_for_unicode() {
     static bool configured = false;
     if (!configured) {
         SetConsoleOutputCP(CP_UTF8);
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hConsole != INVALID_HANDLE_VALUE) {
+            DWORD mode = 0;
+            if (GetConsoleMode(hConsole, &mode)) {
+                SetConsoleMode(hConsole, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+            }
+        }
         configured = true;
     }
 #endif
+}
+
+void set_highlight_background(int code)
+{
+    switch (code) {
+    case 1:
+        cout << "\033[104m";
+        break;
+    case 2:
+        cout << "\033[101m";
+        break;
+    case 3:
+        cout << "\033[102m";
+        break;
+    default:
+        cout << "\033[106m";
+        break;
+    }
 }
 
 char piece_to_fen(Piece p) {
@@ -129,17 +154,8 @@ void print_square_color(const Board &board, const Mask &mask, int i, int j)
     case 0:
         print_square_color(board, i, j);
         return;
-    case 1:
-        set_background(BLEU); // déplacements possibles
-        break;
-    case 2:
-        set_background(ROUGE); // prises possibles
-        break;
-    case 3:
-        set_background(VERT); // piéces mobiles
-        break;
     default:
-        set_background(CYAN); // autre information
+        set_highlight_background(code);
         break;
     }
 
@@ -240,12 +256,7 @@ string board_to_FEN(const Board &board) {
     }
 
     return fen;
-
-    return fen;
 }
-
-
-
 
 void write_FEN(const char *filename, const Board &board) {
     ofstream file(filename);
