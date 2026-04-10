@@ -1,4 +1,4 @@
-#include "mask.hpp"
+#include "hpp/mask.hpp"
 
 void empty_mask(Mask mask) {
     for (int i = 0; i < BOARD_SIZE; ++i) {

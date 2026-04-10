@@ -1,7 +1,6 @@
 #ifndef TYPE_HPP_
 #define TYPE_HPP_
 
-
 enum Piece {
     EMPTY = 0,
     WROY = 1,

@@ -1,5 +1,5 @@
-#include "board.hpp"
-#include "mask.hpp"
+#include "hpp/board.hpp"
+#include "hpp/mask.hpp"
 
 void empty(Board &board) {
     for(int i=0;i<BOARD_SIZE;i++)
@@ -72,10 +72,12 @@ bool is_opponent(Piece attacker, Piece target) {
     return false;
 }
 
+/** @brief Indique si des coordonnees appartiennent au plateau. @param i Indice de ligne. @param j Indice de colonne. @return true si la case est valide. */
 static bool in_bounds(int i, int j) {
     return i >= 0 && i < BOARD_SIZE && j >= 0 && j < BOARD_SIZE;
 }
 
+/** @brief Marque une case attaquee si elle contient une piece adverse. @param board Plateau a analyser. @param mask Masque a remplir. @param i Ligne cible. @param j Colonne cible. @param attacker Piece attaquante. */
 static void mark_if_attacked(const Board &board, Mask mask, int i, int j, Piece attacker) {
     if (!in_bounds(i, j))
         return;
@@ -84,6 +86,7 @@ static void mark_if_attacked(const Board &board, Mask mask, int i, int j, Piece 
     }
 }
 
+/** @brief Marque un coup possible simple ou une prise. @param board Plateau a analyser. @param mask Masque a remplir. @param i Ligne cible. @param j Colonne cible. @param piece Piece qui se deplace. */
 static void mark_possible_move(const Board &board, Mask mask, int i, int j, Piece piece) {
     if (!in_bounds(i, j))
         return;
@@ -94,6 +97,7 @@ static void mark_possible_move(const Board &board, Mask mask, int i, int j, Piec
     }
 }
 
+/** @brief Parcourt des directions glissantes jusqu'au blocage. @param board Plateau a analyser. @param mask Masque a remplir. @param i Ligne de depart. @param j Colonne de depart. @param dirs Tableau des directions. @param dir_count Nombre de directions. */
 static void highlight_sliding_moves(const Board &board, Mask mask, int i, int j, const int dirs[][2], int dir_count) {
     Piece piece = board[i][j];
     if (piece == EMPTY)
@@ -122,6 +126,7 @@ static void highlight_sliding_moves(const Board &board, Mask mask, int i, int j,
     }
 }
 
+/** @brief Verifie si un masque contient au moins une case marquee. @param mask Masque a analyser. @return true si une valeur non nulle est presente. */
 static bool mask_has_highlight(const Mask mask) {
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -132,6 +137,7 @@ static bool mask_has_highlight(const Mask mask) {
     return false;
 }
 
+/** @brief Applique le bon calcul de coups selon la piece donnee. @param board Plateau a analyser. @param mask Masque de sortie. @param i Ligne de la piece. @param j Colonne de la piece. @return true si la piece est prise en charge par les highlights. */
 static bool highlight_possible_moves_piece(const Board &board, Mask mask, int i, int j) {
     Piece piece = board[i][j];
 
@@ -257,7 +263,7 @@ void highlight_movable_pieces(const Board &board, Mask mask, bool whiteTurn) {
             if (!highlight_possible_moves_piece(board, pieceMask, i, j))
                 continue;
             if (mask_has_highlight(pieceMask)) {
-                set_mask(mask, i, j, 3);
+                set_mask(mask, i, j, 1);
             }
         }
     }
@@ -337,3 +343,37 @@ void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn) {
     }
 }
 
+/** @brief Applique le highlight de deplacements de la piece selectionnee. @param board Plateau a analyser. @param mask Masque de sortie. @param i Ligne de la piece. @param j Colonne de la piece. @return true si la piece est prise en charge. */
+bool highlight_possible_moves(const Board &board, Mask mask, int i, int j) {
+    Piece p = board[i][j];
+
+    switch (p) {
+        case WTOUR:
+        case BTOUR:
+            highlight_possible_moves_rook(board, mask, i, j);
+            return true;
+        case WFOU:
+        case BFOU:
+            highlight_possible_moves_bishop(board, mask, i, j);
+            return true;
+        case WREINE:
+        case BREINE:
+            highlight_possible_moves_queen(board, mask, i, j);
+            return true;
+        case WROY:
+        case BROY:
+            highlight_possible_moves_king(board, mask, i, j);
+            return true;
+        case WCAVALIER:
+        case BCAVALIER:
+            highlight_possible_moves_knight(board, mask, i, j);
+            return true;
+        case WPION:
+        case BPION:
+            highlight_possible_moves_pawn(board, mask, i, j);
+            return true;
+        default:
+            clear_mask(mask);
+            return false;
+    }
+}

@@ -6,13 +6,14 @@
 #include <windows.h>
 #endif
 
-#include "board.hpp"
-#include "view.hpp"
+#include "hpp/board.hpp"
+#include "hpp/view.hpp"
 
 using namespace std;
 
 namespace {
 
+/** @brief Active l'affichage Unicode et ANSI du terminal. */
 void configure_console_for_unicode() {
 #ifdef _WIN32
     static bool configured = false;
@@ -30,6 +31,7 @@ void configure_console_for_unicode() {
 #endif
 }
 
+/** @brief Choisit une couleur de fond selon le code du masque. @param code Valeur stockee dans le masque. */
 void set_highlight_background(int code)
 {
     switch (code) {
@@ -48,6 +50,7 @@ void set_highlight_background(int code)
     }
 }
 
+/** @brief Convertit une piece en caractere FEN. @param p Piece a convertir. @return Caractere FEN associe. */
 char piece_to_fen(Piece p) {
     switch (p) {
         case WROY:
@@ -80,6 +83,7 @@ char piece_to_fen(Piece p) {
     throw runtime_error("Piece inconnue");
 }
 
+/** @brief Convertit un caractere FEN en piece. @param c Caractere FEN a convertir. @return Piece correspondante. */
 Piece fen_to_piece(char c) {
     switch (c) {
         case 'K':
@@ -113,6 +117,40 @@ Piece fen_to_piece(char c) {
 
 }
 
+string board_to_FEN(const Board &board) {
+    string fen;
+
+    for (int i = 0; i < 8; ++i) {
+        int vide = 0;
+
+        for (int j = 0; j < 8; ++j) {
+            if (board[i][j] == EMPTY) {
+                ++vide;
+                continue;
+            }
+
+            if (vide > 0) {
+                fen += to_string(vide);
+                vide = 0;
+            }
+
+            fen += piece_to_fen(board[i][j]);
+        }
+
+        if (vide > 0) {
+            fen += to_string(vide);
+        }
+
+        if (i < 7) {
+            fen += '/';
+        }
+    }
+
+    return fen;
+}
+
+/// Fonctions Principales
+
 void set_background(Color Couleur)
 {
     cout << "\033[" << (40 + Couleur) << "m";
@@ -123,6 +161,7 @@ void set_foreground(Color Couleur)
     cout << "\033[" << (30 + Couleur) << "m";
 }
 
+/** @brief Applique un blanc intense pour les pieces blanches. */
 void set_bright_white_foreground()
 {
     cout << "\033[97m";
@@ -151,12 +190,12 @@ void print_square_color(const Board &board, const Mask &mask, int i, int j)
 {
     int code = mask[i][j];
     switch (code) {
-    case 0:
-        print_square_color(board, i, j);
-        return;
-    default:
-        set_highlight_background(code);
-        break;
+        case 0:
+            print_square_color(board, i, j);
+            return;
+        default:
+            set_highlight_background(code);
+            break;
     }
 
     char fen_char = piece_to_fen(board[i][j]);
@@ -224,38 +263,6 @@ void print_board(const Board &board, const Mask &mask) {
         cout << char(97 + j) << " ";
     }
     cout << endl;
-}
-
-string board_to_FEN(const Board &board) {
-    string fen;
-
-    for (int i = 0; i < 8; ++i) {
-        int vide = 0;
-
-        for (int j = 0; j < 8; ++j) {
-            if (board[i][j] == EMPTY) {
-                ++vide;
-                continue;
-            }
-
-            if (vide > 0) {
-                fen += to_string(vide);
-                vide = 0;
-            }
-
-            fen += piece_to_fen(board[i][j]);
-        }
-
-        if (vide > 0) {
-            fen += to_string(vide);
-        }
-
-        if (i < 7) {
-            fen += '/';
-        }
-    }
-
-    return fen;
 }
 
 void write_FEN(const char *filename, const Board &board) {

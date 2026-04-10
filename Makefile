@@ -8,7 +8,7 @@ $(NAME): main.cpp board.cpp view.cpp mask.cpp
 	$(CXX) main.cpp board.cpp view.cpp mask.cpp -o $(NAME) $(CXXFLAGS)
 
 clean:
-	del /Q *.o $(NAME).exe 2>NUL || exit 0
+	del /Q *.o $(NAME).exe fen 2>NUL || exit 0
 
 re:
 	make clean

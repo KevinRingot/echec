@@ -1,16 +1,18 @@
 #include <iostream>
 #include <limits>
 
-#include "board.hpp"
-#include "view.hpp"
-#include "mask.hpp"
+#include "hpp/board.hpp"
+#include "hpp/view.hpp"
+#include "hpp/mask.hpp"
 
 using namespace std;
 
+/** @brief Indique si des coordonnees appartiennent au plateau. @param i Indice de ligne. @param j Indice de colonne. @return true si la case est valide. */
 static bool in_bounds(int i, int j) {
     return i >= 0 && i < BOARD_SIZE && j >= 0 && j < BOARD_SIZE;
 }
 
+/** @brief Convertit une colonne alphabetique en indice numerique. @param c Lettre comprise entre a et h. @return Indice de colonne correspondant. */
 static int abc_to_int(char c) 
 {
     switch (c) {
@@ -34,40 +36,7 @@ static int abc_to_int(char c)
     throw runtime_error("abc inconnu");
 }
 
-static bool highlight_possible_moves(const Board &board, Mask mask, int i, int j) {
-    Piece p = board[i][j];
-
-    switch (p) {
-        case WTOUR:
-        case BTOUR:
-            highlight_possible_moves_rook(board, mask, i, j);
-            return true;
-        case WFOU:
-        case BFOU:
-            highlight_possible_moves_bishop(board, mask, i, j);
-            return true;
-        case WREINE:
-        case BREINE:
-            highlight_possible_moves_queen(board, mask, i, j);
-            return true;
-        case WROY:
-        case BROY:
-            highlight_possible_moves_king(board, mask, i, j);
-            return true;
-        case WCAVALIER:
-        case BCAVALIER:
-            highlight_possible_moves_knight(board, mask, i, j);
-            return true;
-        case WPION:
-        case BPION:
-            highlight_possible_moves_pawn(board, mask, i, j);
-            return true;
-        default:
-            clear_mask(mask);
-            return false;
-    }
-}
-
+/** @brief Point d'entree du programme interactif. @return Code de sortie du programme. */
 int main() {
     Board board;
     Mask mask;
