@@ -182,7 +182,7 @@ int one_loop() {
 
                 if (!king_present(board, !currentWhiteTurn)) {
                 cout << "[FIN] Le roi " << (currentWhiteTurn ? "NOIR" : "BLANC") << " a ete capture. Le jeu s'arrete." << endl;
-                return;
+                return 0;
                 }
                 whiteTurn = !whiteTurn;
 
@@ -201,14 +201,3 @@ int one_loop() {
 }
 
 
-bool king_present(const Board &board, bool whiteKing) {
-    Piece king = whiteKing ? WROY : BROY;
-    for(int i = 0; i < BOARD_SIZE; i++) {
-        for(int j = 0; j < BOARD_SIZE; j++) {
-            if(board[i][j] == king) {
-                return true;
-            }
-        }
-    }
-    return false;
-}

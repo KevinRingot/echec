@@ -473,3 +473,15 @@ bool highlight_possible_moves(const Board &board, Mask mask, int i, int j) {
             return false;
     }
 }
+
+bool king_present(const Board &board, bool whiteKing) {
+    Piece king = whiteKing ? WROY : BROY;
+    for(int i = 0; i < BOARD_SIZE; i++) {
+        for(int j = 0; j < BOARD_SIZE; j++) {
+            if(board[i][j] == king) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
