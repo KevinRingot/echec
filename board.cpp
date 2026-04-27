@@ -44,7 +44,6 @@ void move_piece(Board &board, int i1, int j1, int i2, int j2) {
     board[i1][j1] = EMPTY;
 }
 
-
 const char *piece_to_char(Piece p) {
     const char *pieces[] = {
         " ",

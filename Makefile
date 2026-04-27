@@ -4,8 +4,8 @@ NAME = main
 
 all: $(NAME)
 
-$(NAME): main.cpp board.cpp view.cpp mask.cpp
-	$(CXX) main.cpp board.cpp view.cpp mask.cpp -o $(NAME) $(CXXFLAGS)
+$(NAME): main.cpp board.cpp view.cpp mask.cpp game.cpp outils.cpp
+	$(CXX) main.cpp board.cpp view.cpp mask.cpp game.cpp outils.cpp -o $(NAME) $(CXXFLAGS)
 
 clean:
 	del /Q *.o $(NAME).exe fen 2>NUL || exit 0

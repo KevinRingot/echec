@@ -9,30 +9,14 @@
 #include "hpp/board.hpp"
 #include "hpp/mask.hpp"
 #include "hpp/view.hpp"
+#include "hpp/outils.hpp"
 
 using namespace std;
 
 namespace {
 
-/** @brief Active l'affichage Unicode et ANSI du terminal. */
-void configure_console_for_unicode() {
-#ifdef _WIN32
-    static bool configured = false;
-    if (!configured) {
-        SetConsoleOutputCP(CP_UTF8);
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (hConsole != INVALID_HANDLE_VALUE) {
-            DWORD mode = 0;
-            if (GetConsoleMode(hConsole, &mode)) {
-                SetConsoleMode(hConsole, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-            }
-        }
-        configured = true;
-    }
-#endif
-}
-
-/** @brief Choisit une couleur de fond selon le code du masque. @param code Valeur stockee dans le masque. */
+/** @brief Choisit une couleur de fond selon le code du masque.
+ * @param code Valeur stockee dans le masque. */
 void set_highlight_background(int code)
 {
     switch (code) {
@@ -60,71 +44,6 @@ void set_highlight_background(int code)
     default:
         set_background(GRIS);
         break;
-    }
-}
-
-/** @brief Convertit une piece en caractere FEN. @param p Piece a convertir. @return Caractere FEN associe. */
-char piece_to_fen(Piece p) {
-    switch (p) {
-        case WROY:
-            return 'K';
-        case WREINE:
-            return 'Q';
-        case WCAVALIER:
-            return 'N';
-        case WTOUR:
-            return 'R';
-        case WFOU:
-            return 'B';
-        case WPION:
-            return 'P';
-        case BROY:
-            return 'k';
-        case BREINE:
-            return 'q';
-        case BCAVALIER:
-            return 'n';
-        case BTOUR:
-            return 'r';
-        case BFOU:
-            return 'b';
-        case BPION:
-            return 'p';
-        case EMPTY:
-            return ' ';
-    }
-    throw runtime_error("Piece inconnue");
-}
-
-/** @brief Convertit un caractere FEN en piece. @param c Caractere FEN a convertir. @return Piece correspondante. */
-Piece fen_to_piece(char c) {
-    switch (c) {
-        case 'K':
-            return WROY;
-        case 'Q':
-            return WREINE;
-        case 'N':
-            return WCAVALIER;
-        case 'R': 
-            return WTOUR;
-        case 'B':
-            return WFOU;
-        case 'P':
-            return WPION;
-        case 'k':
-            return BROY;
-        case 'q':
-            return BREINE;
-        case 'n':
-            return BCAVALIER;
-        case 'r':
-            return BTOUR;
-        case 'b':
-            return BFOU;
-        case 'p':
-            return BPION;
-        default:
-            throw runtime_error("Caractere FEN invalide");
     }
 }
 
