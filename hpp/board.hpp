@@ -68,4 +68,6 @@ void highlight_take_pieces(const Board *board, Mask *mask, int i, int j);
 
 bool highlight_possible_moves(const Board *board, Mask *mask, int i, int j);
 
+bool king_present(const Board &board, bool whiteKing);
+
 #endif
