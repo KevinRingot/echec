@@ -175,6 +175,15 @@ int one_loop() {
                 move_piece(board, i1, j1, i2, j2);
                 validMove = true;
                 cout << "[OK] Coup accepte !" << endl;
+                
+                
+                bool currentWhiteTurn = whiteTurn;
+
+
+                if (!king_present(board, !currentWhiteTurn)) {
+                cout << "[FIN] Le roi " << (currentWhiteTurn ? "NOIR" : "BLANC") << " a ete capture. Le jeu s'arrete." << endl;
+                return;
+                }
                 whiteTurn = !whiteTurn;
 
             } catch (const exception &e) {
@@ -183,9 +192,23 @@ int one_loop() {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 
+            
             }
         }
     }
 
     return 0;
+}
+
+
+bool king_present(const Board &board, bool whiteKing) {
+    Piece king = whiteKing ? WROY : BROY;
+    for(int i = 0; i < BOARD_SIZE; i++) {
+        for(int j = 0; j < BOARD_SIZE; j++) {
+            if(board[i][j] == king) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
