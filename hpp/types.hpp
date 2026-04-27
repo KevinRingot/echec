@@ -33,8 +33,17 @@ constexpr int BOARD_SIZE = 8;
 using Board = Piece[BOARD_SIZE][BOARD_SIZE];
 using Mask = int[BOARD_SIZE][BOARD_SIZE];
 
+constexpr int MAX_CAPTURED_PIECES = 16;
+
+struct CapturedPieces {
+    Piece pieces[MAX_CAPTURED_PIECES];
+    int count;
+};
+
 struct Game {
     Board board;
+    CapturedPieces captured_by_white;
+    CapturedPieces captured_by_black;
 };
 
 #endif

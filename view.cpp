@@ -15,48 +15,45 @@ using namespace std;
 
 namespace {
 
-/** @brief Choisit une couleur de fond selon le code du masque.
- * @param code Valeur stockee dans le masque. */
-void set_highlight_background(int code)
-{
+void set_highlight_background(int code) {
     switch (code) {
-    case MASK_RED:
-        cout << "\033[41m";
-        break;
-    case MASK_GREEN:
-        cout << "\033[102m";
-        break;
-    case MASK_BROWN:
-        cout << "\033[43m";
-        break;
-    case MASK_BLUE:
-        cout << "\033[44m";
-        break;
-    case MASK_VIOLET:
-        cout << "\033[45m";
-        break;
-    case MASK_GREEN_DARK:
-        cout << "\033[42m";
-        break;
-    case MASK_GRAY:
-        cout << "\033[100m";
-        break;
-    default:
-        set_background(GRIS);
-        break;
+        case MASK_RED:
+            cout << "\033[41m";
+            break;
+        case MASK_GREEN:
+            cout << "\033[102m";
+            break;
+        case MASK_BROWN:
+            cout << "\033[43m";
+            break;
+        case MASK_BLUE:
+            cout << "\033[44m";
+            break;
+        case MASK_VIOLET:
+            cout << "\033[45m";
+            break;
+        case MASK_GREEN_DARK:
+            cout << "\033[42m";
+            break;
+        case MASK_GRAY:
+            cout << "\033[100m";
+            break;
+        default:
+            set_background(GRIS);
+            break;
     }
 }
 
 }
 
-string board_to_FEN(const Board &board) {
+string board_to_FEN(const Board *board) {
     string fen;
 
     for (int i = 0; i < 8; ++i) {
         int vide = 0;
 
         for (int j = 0; j < 8; ++j) {
-            if (board[i][j] == EMPTY) {
+            if ((*board)[i][j] == EMPTY) {
                 ++vide;
                 continue;
             }
@@ -66,7 +63,7 @@ string board_to_FEN(const Board &board) {
                 vide = 0;
             }
 
-            fen += piece_to_fen(board[i][j]);
+            fen += piece_to_fen((*board)[i][j]);
         }
 
         if (vide > 0) {
@@ -81,35 +78,27 @@ string board_to_FEN(const Board &board) {
     return fen;
 }
 
-/// Fonctions Principales
-
-void set_background(Color Couleur)
-{
+void set_background(Color Couleur) {
     cout << "\033[" << (40 + Couleur) << "m";
 }
 
-void set_foreground(Color Couleur)
-{
+void set_foreground(Color Couleur) {
     cout << "\033[" << (30 + Couleur) << "m";
 }
 
-/** @brief Applique un blanc intense pour les pieces blanches. */
-void set_bright_white_foreground()
-{
+void set_bright_white_foreground() {
     cout << "\033[97m";
 }
 
-void reset_color()
-{
+void reset_color() {
     cout << "\033[0m";
 }
 
-void print_square_color(const Board &board, int i, int j)
-{
+void print_square_color(const Board *board, int i, int j) {
     const bool case_claire = ((i + j) % 2 == 0);
     set_background(case_claire ? JAUNE : VERT);
 
-    char fen_char = piece_to_fen(board[i][j]);
+    char fen_char = piece_to_fen((*board)[i][j]);
     if ('a' <= fen_char && fen_char <= 'z')
         set_foreground(NOIR);
     else if ('A' <= fen_char && fen_char <= 'Z')
@@ -118,9 +107,8 @@ void print_square_color(const Board &board, int i, int j)
         set_foreground(NOIR);
 }
 
-void print_square_color(const Board &board, const Mask &mask, int i, int j)
-{
-    int code = mask[i][j];
+void print_square_color(const Board *board, const Mask *mask, int i, int j) {
+    int code = (*mask)[i][j];
     switch (code) {
         case 0:
             print_square_color(board, i, j);
@@ -130,7 +118,7 @@ void print_square_color(const Board &board, const Mask &mask, int i, int j)
             break;
     }
 
-    char fen_char = piece_to_fen(board[i][j]);
+    char fen_char = piece_to_fen((*board)[i][j]);
     if ('a' <= fen_char && fen_char <= 'z')
         set_foreground(NOIR);
     else if ('A' <= fen_char && fen_char <= 'Z')
@@ -139,19 +127,19 @@ void print_square_color(const Board &board, const Mask &mask, int i, int j)
         set_foreground(NOIR);
 }
 
-void print_square(const Board &board, int i, int j) {
+void print_square(const Board *board, int i, int j) {
     print_square_color(board, i, j);
-    cout << piece_to_char(board[i][j]) << " ";
+    cout << piece_to_char((*board)[i][j]) << " ";
     reset_color();
 }
 
-void print_square(const Board &board, const Mask &mask, int i, int j) {
+void print_square(const Board *board, const Mask *mask, int i, int j) {
     print_square_color(board, mask, i, j);
-    cout << piece_to_char(board[i][j]) << " ";
+    cout << piece_to_char((*board)[i][j]) << " ";
     reset_color();
 }
 
-void print_board(const Board &board) {
+void print_board(const Board *board) {
     configure_console_for_unicode();
     cout << "  ";
     for (int j = 0; j < BOARD_SIZE; j++) {
@@ -166,7 +154,7 @@ void print_board(const Board &board) {
         }
         cout << endl;
     }
-    
+
     cout << "  ";
     for (int j = 0; j < BOARD_SIZE; j++) {
         cout << char(97 + j) << " ";
@@ -174,7 +162,7 @@ void print_board(const Board &board) {
     cout << endl;
 }
 
-void print_board(const Board &board, const Mask &mask) {
+void print_board(const Board *board, const Mask *mask) {
     configure_console_for_unicode();
     cout << "  ";
     for (int j = 0; j < BOARD_SIZE; j++) {
@@ -189,7 +177,7 @@ void print_board(const Board &board, const Mask &mask) {
         }
         cout << endl;
     }
-    
+
     cout << "  ";
     for (int j = 0; j < BOARD_SIZE; j++) {
         cout << char(97 + j) << " ";
@@ -197,7 +185,7 @@ void print_board(const Board &board, const Mask &mask) {
     cout << endl;
 }
 
-void write_FEN(const char *filename, const Board &board) {
+void write_FEN(const char *filename, const Board *board) {
     ofstream file(filename);
     if (!file) {
         throw runtime_error("Impossible d'ouvrir le fichier en sortie");
@@ -206,7 +194,7 @@ void write_FEN(const char *filename, const Board &board) {
     file << board_to_FEN(board) << '\n';
 }
 
-void read_FEN(const char *filename, Board &board) {
+void read_FEN(const char *filename, Board *board) {
     ifstream file(filename);
     if (!file) {
         throw runtime_error("Impossible d'ouvrir le fichier en lecture");
@@ -239,7 +227,7 @@ void read_FEN(const char *filename, Board &board) {
         if (c >= '1' && c <= '8') {
             col += c - '0';
         } else {
-            board[lig][col] = fen_to_piece(c);
+            (*board)[lig][col] = fen_to_piece(c);
             ++col;
         }
 

@@ -6,6 +6,7 @@
 #include <string>
 using namespace std;
 
-void one_loop();
+bool one_run(Game *game, Mask *mask, bool *whiteTurn, bool humanPlayer);
+void init_game(Game *game);
 
 #endif
