@@ -7,6 +7,7 @@
 #endif
 
 #include "hpp/board.hpp"
+#include "hpp/mask.hpp"
 #include "hpp/view.hpp"
 
 using namespace std;
@@ -35,17 +36,29 @@ void configure_console_for_unicode() {
 void set_highlight_background(int code)
 {
     switch (code) {
-    case 1:
-        cout << "\033[104m";
+    case MASK_RED:
+        cout << "\033[41m";
         break;
-    case 2:
-        cout << "\033[101m";
-        break;
-    case 3:
+    case MASK_GREEN:
         cout << "\033[102m";
         break;
+    case MASK_BROWN:
+        cout << "\033[43m";
+        break;
+    case MASK_BLUE:
+        cout << "\033[44m";
+        break;
+    case MASK_VIOLET:
+        cout << "\033[45m";
+        break;
+    case MASK_GREEN_DARK:
+        cout << "\033[42m";
+        break;
+    case MASK_GRAY:
+        cout << "\033[100m";
+        break;
     default:
-        cout << "\033[106m";
+        set_background(GRIS);
         break;
     }
 }

@@ -82,7 +82,7 @@ static void mark_if_attacked(const Board &board, Mask mask, int i, int j, Piece 
     if (!in_bounds(i, j))
         return;
     if (is_opponent(attacker, board[i][j])) {
-        set_mask(mask, i, j, 2);
+        set_mask(mask, i, j, MASK_RED);
     }
 }
 
@@ -91,9 +91,9 @@ static void mark_possible_move(const Board &board, Mask mask, int i, int j, Piec
     if (!in_bounds(i, j))
         return;
     if (board[i][j] == EMPTY) {
-        set_mask(mask, i, j, 1);
+        set_mask(mask, i, j, MASK_BLUE);
     } else if (is_opponent(piece, board[i][j])) {
-        set_mask(mask, i, j, 2);
+        set_mask(mask, i, j, MASK_RED);
     }
 }
 
@@ -115,11 +115,11 @@ static void highlight_sliding_moves(const Board &board, Mask mask, int i, int j,
             if (!in_bounds(ii, jj))
                 break;
             if (board[ii][jj] == EMPTY) {
-                set_mask(mask, ii, jj, 1);
+                set_mask(mask, ii, jj, MASK_BLUE);
                 continue;
             }
             if (is_opponent(piece, board[ii][jj])) {
-                set_mask(mask, ii, jj, 2);
+                set_mask(mask, ii, jj, MASK_RED);
             }
             break;
         }
@@ -168,6 +168,82 @@ static bool highlight_possible_moves_piece(const Board &board, Mask mask, int i,
             return true;
         default:
             clear_mask(mask);
+            return false;
+    }
+}
+
+/** @brief Indique si une piece glissante attaque une case cible. @param board Plateau a analyser. @param i Ligne de la piece. @param j Colonne de la piece. @param targetI Ligne cible. @param targetJ Colonne cible. @param dirs Directions autorisees. @param dir_count Nombre de directions. @param max_steps Portee maximale. @return true si la case cible est attaquee. */
+static bool sliding_piece_attacks_square(const Board &board, int i, int j, int targetI, int targetJ, const int dirs[][2], int dir_count, int max_steps) {
+    for (int d = 0; d < dir_count; ++d) {
+        int di = dirs[d][0];
+        int dj = dirs[d][1];
+
+        for (int step = 1; step <= max_steps; ++step) {
+            int ii = i + di * step;
+            int jj = j + dj * step;
+            if (!in_bounds(ii, jj))
+                break;
+            if (ii == targetI && jj == targetJ)
+                return true;
+            if (board[ii][jj] != EMPTY)
+                break;
+        }
+    }
+
+    return false;
+}
+
+/** @brief Indique si une piece peut attaquer une case donnee. @param board Plateau a analyser. @param i Ligne de la piece. @param j Colonne de la piece. @param targetI Ligne cible. @param targetJ Colonne cible. @return true si la piece attaque la case cible. */
+static bool piece_attacks_square(const Board &board, int i, int j, int targetI, int targetJ) {
+    Piece piece = board[i][j];
+
+    switch (piece) {
+        case WPION:
+            return (targetI == i - 1) && (targetJ == j - 1 || targetJ == j + 1);
+        case BPION:
+            return (targetI == i + 1) && (targetJ == j - 1 || targetJ == j + 1);
+        case WCAVALIER:
+        case BCAVALIER:
+            {
+                const int di[] = {-2, -2, -1, -1, 1, 1, 2, 2};
+                const int dj[] = {-1, 1, -2, 2, -2, 2, -1, 1};
+                for (int k = 0; k < 8; ++k) {
+                    if (i + di[k] == targetI && j + dj[k] == targetJ)
+                        return true;
+                }
+                return false;
+            }
+        case WTOUR:
+        case BTOUR:
+            {
+                const int dirs[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+                return sliding_piece_attacks_square(board, i, j, targetI, targetJ, dirs, 4, BOARD_SIZE);
+            }
+        case WFOU:
+        case BFOU:
+            {
+                const int dirs[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+                return sliding_piece_attacks_square(board, i, j, targetI, targetJ, dirs, 4, BOARD_SIZE);
+            }
+        case WREINE:
+        case BREINE:
+            {
+                const int dirs[8][2] = {
+                    {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+                };
+                return sliding_piece_attacks_square(board, i, j, targetI, targetJ, dirs, 8, BOARD_SIZE);
+            }
+        case WROY:
+        case BROY:
+            {
+                const int dirs[8][2] = {
+                    {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+                };
+                return sliding_piece_attacks_square(board, i, j, targetI, targetJ, dirs, 8, 1);
+            }
+        default:
             return false;
     }
 }
@@ -232,19 +308,19 @@ void highlight_possible_moves_pawn(const Board &board, Mask mask, int i, int j) 
     int next_i = i + direction;
 
     if (in_bounds(next_i, j) && board[next_i][j] == EMPTY) {
-        set_mask(mask, next_i, j, 1);
+        set_mask(mask, next_i, j, MASK_BLUE);
 
         int double_i = i + 2 * direction;
         if (i == start_row && in_bounds(double_i, j) && board[double_i][j] == EMPTY) {
-            set_mask(mask, double_i, j, 1);
+            set_mask(mask, double_i, j, MASK_BLUE);
         }
     }
 
     if (in_bounds(next_i, j - 1) && is_opponent(piece, board[next_i][j - 1])) {
-        set_mask(mask, next_i, j - 1, 2);
+        set_mask(mask, next_i, j - 1, MASK_RED);
     }
     if (in_bounds(next_i, j + 1) && is_opponent(piece, board[next_i][j + 1])) {
-        set_mask(mask, next_i, j + 1, 2);
+        set_mask(mask, next_i, j + 1, MASK_RED);
     }
 }
 
@@ -263,7 +339,7 @@ void highlight_movable_pieces(const Board &board, Mask mask, bool whiteTurn) {
             if (!highlight_possible_moves_piece(board, pieceMask, i, j))
                 continue;
             if (mask_has_highlight(pieceMask)) {
-                set_mask(mask, i, j, 1);
+                set_mask(mask, i, j, MASK_BLUE);
             }
         }
     }
@@ -330,7 +406,7 @@ void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn) {
                                 if (board[ii][jj] == EMPTY)
                                     continue;
                                 if (is_opponent(p, board[ii][jj]))
-                                    set_mask(mask, ii, jj, 2);
+                                    set_mask(mask, ii, jj, MASK_RED);
                                 break;
                             }
                         }
@@ -338,6 +414,27 @@ void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn) {
                     break;
                 default:
                     break;
+            }
+        }
+    }
+}
+
+void highlight_take_pieces(const Board &board, Mask mask, int i, int j) {
+    Piece target = board[i][j];
+    clear_mask(mask);
+
+    if (target == EMPTY)
+        return;
+
+    for (int ii = 0; ii < BOARD_SIZE; ++ii) {
+        for (int jj = 0; jj < BOARD_SIZE; ++jj) {
+            Piece attacker = board[ii][jj];
+            if (attacker == EMPTY)
+                continue;
+            if (!is_opponent(attacker, target))
+                continue;
+            if (piece_attacks_square(board, ii, jj, i, j)) {
+                set_mask(mask, ii, jj, MASK_BLUE);
             }
         }
     }

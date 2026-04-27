@@ -3,6 +3,17 @@
 
 #include "types.hpp"
 
+enum MaskCode {
+    MASK_NONE = 0,
+    MASK_RED = 1,
+    MASK_GREEN = 2,
+    MASK_BROWN = 3,
+    MASK_BLUE = 4,
+    MASK_VIOLET = 5,
+    MASK_GREEN_DARK = 6,
+    MASK_GRAY = 7
+};
+
 /** @brief Met toutes les cases du masque a zero. @param mask Masque a reinitialiser. */
 void empty_mask(Mask mask);
 /** @brief Efface le contenu d'un masque. @param mask Masque a vider. */

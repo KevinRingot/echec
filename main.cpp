@@ -36,6 +36,59 @@ static int abc_to_int(char c)
     throw runtime_error("abc inconnu");
 }
 
+/** @brief Affiche les differents masques consultables avant un coup. */
+static void mask_choices_menu() {
+    cout << "\n--- Menu de visualisation ---" << endl;
+    cout << "1. Deplacements disponibles de vos pieces" << endl;
+    cout << "2. Pieces adverses que vous pouvez prendre" << endl;
+    cout << "3. Vos pieces qui peuvent etre prises" << endl;
+    cout << "0. Continuer (jouer un coup)" << endl;
+    cout << "Choix > ";
+}
+
+/** @brief Permet au joueur d'afficher autant de masques qu'il le souhaite avant de jouer. */
+static void mask_choices(const Board &board, bool whiteTurn) {
+    while (true) {
+        mask_choices_menu();
+
+        int choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "[ERREUR] Choix invalide." << endl;
+            continue;
+        }
+
+        if (choice == 0) {
+            return;
+        }
+
+        Mask visualMask;
+        clear_mask(visualMask);
+
+        switch (choice) {
+            case 1:
+                highlight_movable_pieces(board, visualMask, whiteTurn);
+                cout << "\n[INFO] Deplacements disponibles de vos pieces :" << endl;
+                print_board(board, visualMask);
+                break;
+            case 2:
+                highlight_attacked_pieces(board, visualMask, whiteTurn);
+                cout << "\n[INFO] Pieces adverses que vous pouvez prendre :" << endl;
+                print_board(board, visualMask);
+                break;
+            case 3:
+                highlight_attacked_pieces(board, visualMask, !whiteTurn);
+                cout << "\n[INFO] Vos pieces qui peuvent etre prises :" << endl;
+                print_board(board, visualMask);
+                break;
+            default:
+                cout << "[ERREUR] Choix invalide." << endl;
+                break;
+        }
+    }
+}
+
 /** @brief Point d'entree du programme interactif. @return Code de sortie du programme. */
 int main() {
     Board board;
@@ -53,6 +106,7 @@ int main() {
         cout << "================================================" << endl;
         cout << endl;
         print_board(board, mask);
+        mask_choices(board, whiteTurn);
 
         bool validMove = false;
         while (!validMove) {
@@ -97,7 +151,7 @@ int main() {
 
                 bool highlighted = highlight_possible_moves(board, mask, i1, j1);
                 if (highlighted) {
-                    set_mask(mask, i1, j1, 3);
+                    set_mask(mask, i1, j1, MASK_BROWN);
                     cout << "\nCoups possibles pour la piece selectionnee :" << endl;
                     print_board(board, mask);
                 } else {

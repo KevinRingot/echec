@@ -39,6 +39,8 @@ void highlight_possible_moves_pawn(const Board &board, Mask mask, int i, int j);
 void highlight_movable_pieces(const Board &board, Mask mask, bool whiteTurn);
 /** @brief Met en evidence les pieces attaquables par le joueur courant. @param board Plateau a analyser. @param mask Masque de sortie. @param whiteTurn true si c'est au tour des blancs. */
 void highlight_attacked_pieces(const Board &board, Mask mask, bool whiteTurn);
+/** @brief Met en evidence les pieces adverses qui peuvent prendre une piece donnee. @param board Plateau a analyser. @param mask Masque de sortie. @param i Ligne de la piece cible. @param j Colonne de la piece cible. */
+void highlight_take_pieces(const Board &board, Mask mask, int i, int j);
 
 bool highlight_possible_moves(const Board &board, Mask mask, int i, int j);
 
